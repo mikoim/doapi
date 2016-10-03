@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/rs/cors"
 	"github.com/unrolled/render"
 )
 
@@ -69,5 +70,8 @@ func main() {
 	router := httprouter.New()
 	router.GET("/v0/cancelled/classes/:location", getCancelledClasses)
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	//CORS
+	handler := cors.Default().Handler(router)
+
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }
