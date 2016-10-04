@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -14,22 +15,24 @@ var (
 	rdr *render.Render
 )
 
-func getCancelledClasses(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func getCancelledClasses(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var katei, kouchi int
 
-	switch ps.ByName("location") {
-	case "imadegawa":
+	location := r.URL.Query().Get("location")
+
+	switch location {
+	case "1":
 		katei = 1
 		kouchi = 1
-	case "kyotanabe":
+	case "2":
 		katei = 1
 		kouchi = 2
-	case "graduate":
+	case "3":
 		katei = 3
 		kouchi = 3
 	default:
 		rdr.JSON(w, http.StatusBadRequest, &Error{
-			Message: "unknown location",
+			Message: fmt.Sprintf("Unknown location \"%s\". The location parameter should be 1, 2, or 3.", location),
 		})
 		return
 	}
@@ -68,7 +71,7 @@ func main() {
 
 	// Routing
 	router := httprouter.New()
-	router.GET("/v0/cancelled/classes/:location", getCancelledClasses)
+	router.GET("/v1/duet/cancelled_classes", getCancelledClasses)
 
 	//CORS
 	handler := cors.Default().Handler(router)
