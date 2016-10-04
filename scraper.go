@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -17,6 +18,11 @@ const (
 	selectorHeader       = "body > table > tbody > tr > td > div:nth-child(4) > table:nth-child(1) > tbody > tr > th"
 	selectorSubjects     = "body > table > tbody > tr > td > div:nth-child(4) > table:nth-child(3) > tbody > .style1"
 	selectorLastModified = "body > table > tbody > tr > td > div:nth-child(7) > center > table > tbody > tr:nth-child(1) > th"
+	regexpTrimGarbage    = "( \n| {2,})"
+)
+
+var (
+	reTrimGarbage *regexp.Regexp
 )
 
 func init() {
@@ -25,6 +31,9 @@ func init() {
 		l = time.UTC
 	}
 	time.Local = l
+
+	reTrimGarbage = regexp.MustCompile(regexpTrimGarbage)
+	reTrimGarbage.Longest()
 }
 
 func parseSubjects(root *goquery.Document) (*[]Subject, error) {
@@ -45,11 +54,14 @@ func parseSubjects(root *goquery.Document) (*[]Subject, error) {
 			period = subjects[len(subjects)-1].Period
 		}
 
+		instructor := reTrimGarbage.ReplaceAllString(cells[2], " ")
+		reason := reTrimGarbage.ReplaceAllString(cells[3], "")
+
 		subject := Subject{
 			Period:     period,
 			Name:       cells[1],
-			Instructor: cells[2],
-			Reason:     cells[3],
+			Instructor: instructor,
+			Reason:     reason,
 		}
 
 		subjects = append(subjects, subject)
