@@ -16,7 +16,7 @@ import (
 const (
 	timeLocation         = "Asia/Tokyo"
 	selectorHeader       = "body > table > tbody > tr > td > div:nth-child(4) > table:nth-child(1) > tbody > tr > th"
-	selectorSubjects     = "body > table > tbody > tr > td > div:nth-child(4) > table:nth-child(3) > tbody > .style1"
+	selectorClasses      = "body > table > tbody > tr > td > div:nth-child(4) > table:nth-child(3) > tbody > .style1"
 	selectorLastModified = "body > table > tbody > tr > td > div:nth-child(7) > center > table > tbody > tr:nth-child(1) > th"
 	regexpTrimGarbage    = "( \n| {2,})"
 )
@@ -36,10 +36,10 @@ func init() {
 	reTrimGarbage.Longest()
 }
 
-func parseSubjects(root *goquery.Document) (*[]Subject, error) {
-	var subjects []Subject
+func parseClasses(root *goquery.Document) (*[]Class, error) {
+	var classes []Class
 
-	root.Find(selectorSubjects).Each(func(i int, s *goquery.Selection) {
+	root.Find(selectorClasses).Each(func(i int, s *goquery.Selection) {
 		var cells []string
 
 		s.Children().Each(func(i int, s *goquery.Selection) {
@@ -51,23 +51,23 @@ func parseSubjects(root *goquery.Document) (*[]Subject, error) {
 
 		period, _ := strconv.Atoi(strings.Replace(cells[0], "講時", "", 1))
 		if period == 0 {
-			period = subjects[len(subjects)-1].Period
+			period = classes[len(classes)-1].Period
 		}
 
 		instructor := reTrimGarbage.ReplaceAllString(cells[2], " ")
 		reason := reTrimGarbage.ReplaceAllString(cells[3], "")
 
-		subject := Subject{
+		class := Class{
 			Period:     period,
 			Name:       cells[1],
 			Instructor: instructor,
 			Reason:     reason,
 		}
 
-		subjects = append(subjects, subject)
+		classes = append(classes, class)
 	})
 
-	return &subjects, nil
+	return &classes, nil
 }
 
 func parseLastModified(root *goquery.Document) (time.Time, error) {
@@ -124,7 +124,7 @@ func Parse(f io.Reader) (*Notification, error) {
 		return n, err
 	}
 
-	subjects, err := parseSubjects(root)
+	classes, err := parseClasses(root)
 	if err != nil {
 		return n, err
 	}
@@ -139,7 +139,7 @@ func Parse(f io.Reader) (*Notification, error) {
 		return n, err
 	}
 
-	n = &Notification{location, *subjects, date, updatedAt}
+	n = &Notification{location, *classes, date, updatedAt}
 
 	return n, nil
 }

@@ -2,7 +2,7 @@ package main
 
 import "time"
 
-type Subject struct {
+type Class struct {
 	Period     int    `json:"period"`
 	Name       string `json:"name"`
 	Instructor string `json:"instructor"`
@@ -11,7 +11,7 @@ type Subject struct {
 
 type Notification struct {
 	Location  string    `json:"location"`
-	Subjects  []Subject `json:"subjects"`
+	Classes   []Class   `json:"classes"`
 	Date      time.Time `json:"date"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
