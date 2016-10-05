@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/mikoim/newrelic-handler"
 	"github.com/rs/cors"
 	"github.com/unrolled/render"
 )
@@ -73,8 +75,18 @@ func main() {
 	router := httprouter.New()
 	router.GET("/v1/duet/cancelled_classes", getCancelledClasses)
 
-	//CORS
+	// CORS
 	handler := cors.Default().Handler(router)
+
+	// New Relic
+	n, err := nrh.New(nrh.Options{
+		ApplicationName: os.Getenv("NEWRELIC_APPNAME"),
+		LicenseKey:      os.Getenv("NEWRELIC_LICENSE"),
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	handler = n.Handler(router)
 
 	log.Fatal(http.ListenAndServe(":8080", handler))
 }
