@@ -20,16 +20,18 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	var l *time.Location
-	var e error
+	l, e := time.LoadLocation("Asia/Tokyo")
+	if e != nil {
+		panic(e)
+	}
 
-	if l, e = time.LoadLocation("Asia/Tokyo"); e != nil {
+	testDate, e = time.ParseInLocation("2006年1月2日15時04分", "2011年11月11日00時00分", l)
+	if e != nil {
 		panic(e)
 	}
-	if testDate, e = time.ParseInLocation("2006年1月2日15時04分", "2011年11月11日00時00分", l); e != nil {
-		panic(e)
-	}
-	if testTime, e = time.ParseInLocation("2006年1月2日15時04分", "2011年11月11日11時11分", l); e != nil {
+
+	testTime, e = time.ParseInLocation("2006年1月2日15時04分", "2011年11月11日11時11分", l)
+	if e != nil {
 		panic(e)
 	}
 
@@ -57,16 +59,14 @@ func TestMain(m *testing.M) {
 }
 
 func loadDoc(path string) *goquery.Document {
-	var f *os.File
-	var e error
-	var d *goquery.Document
-
-	if f, e = os.Open(path); e != nil {
+	f, e := os.Open(path)
+	if e != nil {
 		panic(e)
 	}
 	defer f.Close()
 
-	if d, e = goquery.NewDocumentFromReader(transform.NewReader(f, japanese.ShiftJIS.NewDecoder())); e != nil {
+	d, e := goquery.NewDocumentFromReader(transform.NewReader(f, japanese.ShiftJIS.NewDecoder()))
+	if e != nil {
 		panic(e)
 	}
 
@@ -74,10 +74,8 @@ func loadDoc(path string) *goquery.Document {
 }
 
 func TestParseClasses(t *testing.T) {
-	var c *[]Class
-	var e error
-
-	if c, e = parseClasses(testDoc); e != nil {
+	c, e := parseClasses(testDoc)
+	if e != nil {
 		panic(e)
 	}
 
@@ -87,10 +85,8 @@ func TestParseClasses(t *testing.T) {
 }
 
 func TestParseClassesEmpty(t *testing.T) {
-	var c *[]Class
-	var e error
-
-	if c, e = parseClasses(testDocEmpty); e != nil {
+	c, e := parseClasses(testDocEmpty)
+	if e != nil {
 		panic(e)
 	}
 
@@ -100,10 +96,8 @@ func TestParseClassesEmpty(t *testing.T) {
 }
 
 func TestParseLastModified(t *testing.T) {
-	var tt time.Time
-	var e error
-
-	if tt, e = parseLastModified(testDoc); e != nil {
+	tt, e := parseLastModified(testDoc)
+	if e != nil {
 		panic(e)
 	}
 
@@ -113,10 +107,8 @@ func TestParseLastModified(t *testing.T) {
 }
 
 func TestParseHeaderDate(t *testing.T) {
-	var tt time.Time
-	var e error
-
-	if tt, e = parseHeaderDate(testDoc); e != nil {
+	tt, e := parseHeaderDate(testDoc)
+	if e != nil {
 		panic(e)
 	}
 
@@ -126,10 +118,8 @@ func TestParseHeaderDate(t *testing.T) {
 }
 
 func TestParseHeaderLocation(t *testing.T) {
-	var l string
-	var e error
-
-	if l, e = parseHeaderLocation(testDoc); e != nil {
+	l, e := parseHeaderLocation(testDoc)
+	if e != nil {
 		panic(e)
 	}
 
@@ -139,16 +129,14 @@ func TestParseHeaderLocation(t *testing.T) {
 }
 
 func TestParse(t *testing.T) {
-	var f *os.File
-	var e error
-	var n *Notification
-
-	if f, e = os.Open("./testdata/page.html"); e != nil {
+	f, e := os.Open("./testdata/page.html")
+	if e != nil {
 		panic(e)
 	}
 	defer f.Close()
 
-	if n, e = Parse(f); e != nil {
+	n, e := Parse(f)
+	if e != nil {
 		panic(e)
 	}
 
