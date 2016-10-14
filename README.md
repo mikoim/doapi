@@ -1,6 +1,9 @@
 # doapi
 API Gateway for D05h15h4 University
 
+[![CircleCI](https://circleci.com/gh/mikoim/doapi/tree/master.svg?style=svg)](https://circleci.com/gh/mikoim/doapi/tree/master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mikoim/doapi)](https://goreportcard.com/report/github.com/mikoim/doapi)
+
 ## Prerequisites
 
 * Go : tested on `go` version 1.7.1
