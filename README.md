@@ -1,5 +1,5 @@
 # doapi
-API Gateway for D05h15h4 University
+API Gateway for Doshisha University
 
 [![CircleCI](https://circleci.com/gh/mikoim/doapi/tree/master.svg?style=svg)](https://circleci.com/gh/mikoim/doapi/tree/master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mikoim/doapi)](https://goreportcard.com/report/github.com/mikoim/doapi)
